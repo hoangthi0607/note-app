@@ -3,18 +3,17 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
+
 COPY . .
 
-# Fix Prisma
-RUN npx prisma generate
-# Optional: RUN npx prisma migrate deploy
-
+# ✅ build đã bao gồm prisma generate
 RUN npm run build
 
-FROM node:18 AS runner
+FROM node:18-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+
 COPY --from=builder /app ./
-RUN npm install --omit=dev
+
 EXPOSE 3000
 CMD ["npm", "start"]
